@@ -255,6 +255,33 @@ function renderOriginalLocations() {
   `).join("");
 }
 
+function renderTourFrame(location) {
+  const isMixedContent = window.location.protocol === "https:" && location.iframeUrl.startsWith("http://");
+
+  if (isMixedContent) {
+    return `
+      <div class="tour-frame-wrap tour-frame-fallback">
+        <div>
+          <strong>Open the 360 view in a new tab</strong>
+          <p>This tour is hosted on a non-secure link, so the live website cannot display it inside this page.</p>
+          <a class="control-button" href="${location.iframeUrl}" target="_blank" rel="noreferrer">Open 360 View</a>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="tour-frame-wrap">
+      <iframe
+        src="${location.iframeUrl}"
+        title="360 degree preview of ${location.title}"
+        allowfullscreen
+        aria-label="360 degree preview of ${location.title}"
+      ></iframe>
+    </div>
+  `;
+}
+
 function renderPreview(location) {
   state.selectedOriginalId = location.id;
   previewPanel.innerHTML = `
@@ -263,14 +290,7 @@ function renderPreview(location) {
         <p class="eyebrow">360 immersive preview</p>
         <h3>${location.title}</h3>
         <p>${location.summary}</p>
-        <div class="tour-frame-wrap">
-          <iframe
-            src="${location.iframeUrl}"
-            title="360 degree preview of ${location.title}"
-            allowfullscreen
-            aria-label="360 degree preview of ${location.title}"
-          ></iframe>
-        </div>
+        ${renderTourFrame(location)}
       </div>
       <div class="preview-meta">
         <div class="match-score" aria-label="${accessMatchLabel(location.score)}">

@@ -555,6 +555,26 @@ input:focus-visible {
   border: 0;
 }
 
+.tour-frame-fallback {
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  color: #fff;
+  text-align: center;
+}
+
+.tour-frame-fallback > div {
+  display: grid;
+  max-width: 460px;
+  gap: 1rem;
+  justify-items: center;
+}
+
+.tour-frame-fallback p {
+  color: rgba(255, 255, 255, 0.82);
+  margin: 0;
+}
+
 .preview-meta {
   display: grid;
   align-content: start;
