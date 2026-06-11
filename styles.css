@@ -575,6 +575,12 @@ input:focus-visible {
   margin: 0;
 }
 
+.map-link-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
 .preview-meta {
   display: grid;
   align-content: start;

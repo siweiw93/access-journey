@@ -255,6 +255,16 @@ function renderOriginalLocations() {
   `).join("");
 }
 
+function streetMapUrl(location) {
+  const [lat, lng] = location.coordinates;
+  return `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=17/${lat}/${lng}`;
+}
+
+function directionsUrl(location) {
+  const [lat, lng] = location.coordinates;
+  return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`;
+}
+
 function renderTourFrame(location) {
   const isMixedContent = window.location.protocol === "https:" && location.iframeUrl.startsWith("http://");
 
@@ -262,8 +272,8 @@ function renderTourFrame(location) {
     return `
       <div class="tour-frame-wrap tour-frame-fallback">
         <div>
-          <strong>Open the 360 view in a new tab</strong>
-          <p>This tour is hosted on a non-secure link, so the live website cannot display it inside this page.</p>
+          <strong>Open the 360 view</strong>
+          <p>The immersive tour is available as a separate full-screen view.</p>
           <a class="control-button" href="${location.iframeUrl}" target="_blank" rel="noreferrer">Open 360 View</a>
         </div>
       </div>
@@ -300,6 +310,12 @@ function renderPreview(location) {
         <ul class="hotspot-list">${location.hotspots.map((item) => `<li>${item}</li>`).join("")}</ul>
         <h4>Visit Guidance</h4>
         <p>${location.route}</p>
+        <h4>Street Map & Navigation</h4>
+        <p>Open the location on a street map or start walking directions.</p>
+        <div class="map-link-row">
+          <a class="control-button secondary" href="${streetMapUrl(location)}" target="_blank" rel="noreferrer">Street Map</a>
+          <a class="control-button secondary" href="${directionsUrl(location)}" target="_blank" rel="noreferrer">Directions</a>
+        </div>
         <h4>Notes</h4>
         <p>${location.notes}</p>
         <div class="tag-list">${location.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>
@@ -344,7 +360,13 @@ function initAccessMap() {
 
   accessMarkers = originalLocations.map((location) => {
     const marker = L.marker(location.coordinates, { icon }).addTo(accessMap);
-    marker.bindPopup(`<strong>${location.title}</strong><br>${location.category}`);
+    marker.bindPopup(`
+      <strong>${location.title}</strong><br>
+      ${location.category}<br>
+      <a href="${streetMapUrl(location)}" target="_blank" rel="noreferrer">Street Map</a>
+      &nbsp;|&nbsp;
+      <a href="${directionsUrl(location)}" target="_blank" rel="noreferrer">Directions</a>
+    `);
     marker.on("click", () => selectOriginalLocation(location.id, false));
     return marker;
   });
