@@ -526,8 +526,25 @@ input:focus-visible {
   overflow: hidden;
 }
 
+.map-panel-header {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem 1rem 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.map-panel-header h3,
+.map-panel-header p {
+  margin: 0;
+}
+
+.map-panel-header > p {
+  color: var(--muted);
+  font-weight: 700;
+}
+
 #accessMap {
-  min-height: 520px;
+  min-height: 440px;
   width: 100%;
 }
 

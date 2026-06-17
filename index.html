@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Access Journey</title>
     <link rel="stylesheet" href="./vendor/leaflet/leaflet.css" />
-    <link rel="stylesheet" href="./styles.css?v=12" />
+    <link rel="stylesheet" href="./styles.css?v=13" />
   </head>
   <body>
     <header class="app-header">
@@ -147,7 +147,14 @@
             <h3>Available 360° Locations</h3>
             <div id="originalLocationList"></div>
           </aside>
-          <div class="map-panel">
+          <div class="map-panel" aria-labelledby="street-map-title">
+            <div class="map-panel-header">
+              <div>
+                <p class="eyebrow">Street Map</p>
+                <h3 id="street-map-title">Street map location preview</h3>
+              </div>
+              <p>Use the map to check the surrounding streets before opening the 360° view.</p>
+            </div>
             <div id="accessMap" role="img" aria-label="Map showing original accessibility scene locations"></div>
           </div>
           <article class="preview-panel" id="previewPanel" aria-live="polite">
@@ -194,6 +201,6 @@
     </footer>
 
     <script src="./vendor/leaflet/leaflet.js"></script>
-    <script src="./app.js?v=12"></script>
+    <script src="./app.js?v=13"></script>
   </body>
 </html>
