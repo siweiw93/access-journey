@@ -636,7 +636,8 @@ function getTourEmbedUrl(tourUrl) {
   if (!proxyBase) return "";
 
   const parsed = new URL(tourUrl);
-  return `${proxyBase}${parsed.pathname}${parsed.search}`;
+  const normalizedPath = `/${parsed.pathname.replace(/^\/+/, "")}`;
+  return `${proxyBase}${normalizedPath}${parsed.search}`;
 }
 
 function renderSpots() {
