@@ -1,668 +1,976 @@
-const scenes = [
+const locations = [
   {
-    id: "clinic",
-    title: "Community Health Clinic",
-    category: "service",
-    visualPosition: "0% 0%",
-    mode: ["wheelchair", "mobility", "lowvision"],
-    score: 92,
-    summary: "A healthcare visit with step-free entry, reception guidance, quiet waiting, and clear room numbers.",
-    tags: ["Step-free entry", "Priority seating", "Clear signage"],
-    risks: ["Busy check-in desk", "Long corridors", "Appointment delays"],
-    checklist: ["Confirm entrance ramp location", "Save clinic phone number", "Ask for seated check-in support"],
-    route: "Best arrival: use the east entrance, pause at the seating zone, then follow the blue floor line to reception."
-  },
-  {
-    id: "transit",
-    title: "Accessible Transit Hub",
-    category: "transit",
-    visualPosition: "33.333% 0%",
-    mode: ["wheelchair", "lowvision", "mobility"],
-    score: 84,
-    summary: "A bus and rail connection with elevators, tactile paths, audio announcements, and transfer seating.",
-    tags: ["Elevator", "Audio alerts", "Tactile paving"],
-    risks: ["Elevator crowding", "Platform noise", "Fast passenger flow"],
-    checklist: ["Check elevator status", "Choose off-peak travel time", "Identify staff help point"],
-    route: "Best arrival: enter through the elevator lobby, wait near the marked seating bay, and board from the front zone."
-  },
-  {
-    id: "library",
-    title: "Neighborhood Library",
-    category: "indoor",
-    visualPosition: "66.666% 0%",
-    mode: ["sensory", "mobility", "lowvision"],
-    score: 95,
-    summary: "A calm indoor route with reading seats, bright orientation signs, quiet areas, and staff assistance.",
-    tags: ["Quiet zone", "Large print", "Staff desk"],
-    risks: ["Low shelves", "Study-room glass doors", "Uneven lighting near stacks"],
-    checklist: ["Reserve a ground-floor seat", "Ask for large-print materials", "Use the main aisle to avoid narrow rows"],
-    route: "Best arrival: enter from the main door, turn right at the service desk, and use the wide central aisle."
-  },
-  {
-    id: "market",
-    title: "Fresh Food Market",
-    category: "indoor",
-    visualPosition: "100% 0%",
-    mode: ["wheelchair", "mobility", "sensory"],
-    score: 78,
-    summary: "A shopping scene with wider aisles, rest points, checkout support, and low-sensory shopping hours.",
-    tags: ["Wide aisles", "Rest bench", "Low-sensory hours"],
-    risks: ["Peak-hour crowding", "Wet floor near produce", "High shelf items"],
-    checklist: ["Visit during quiet hours", "Use a basket cart", "Ask staff for high-shelf items"],
-    route: "Best arrival: start at produce, rest near the bakery bench, then use the priority checkout lane."
-  },
-  {
-    id: "park",
-    title: "Park Rest Loop",
-    category: "outdoor",
-    visualPosition: "0% 100%",
-    mode: ["wheelchair", "mobility", "sensory", "lowvision"],
-    score: 90,
-    summary: "A gentle outdoor loop with frequent benches, shade, open sightlines, and low-gradient paths.",
-    tags: ["Benches", "Shade", "Gentle slope"],
-    risks: ["Seasonal mud", "Cyclists crossing", "Limited lighting after sunset"],
-    checklist: ["Choose daylight hours", "Use the paved loop", "Plan one rest stop every ten minutes"],
-    route: "Best arrival: begin at the south gate, follow the paved loop clockwise, and rest at the garden seating area."
-  },
-  {
-    id: "museum",
-    title: "Small City Museum",
-    category: "indoor",
-    visualPosition: "33.333% 100%",
-    mode: ["lowvision", "mobility", "sensory"],
-    score: 82,
-    summary: "A culture visit with elevators, slower viewing areas, large captions, and quieter gallery timing.",
-    tags: ["Elevator", "Large captions", "Quiet gallery"],
-    risks: ["Dim exhibit rooms", "Reflective glass", "Crowded special exhibits"],
-    checklist: ["Request an accessible map", "Start with brighter galleries", "Avoid special exhibit peak time"],
-    route: "Best arrival: use the lobby elevator, visit Gallery B first, then pause at the seating alcove."
-  },
-  {
-    id: "cafe",
-    title: "Cafe and Book Lounge",
-    category: "indoor",
-    visualPosition: "66.666% 100%",
-    mode: ["sensory", "mobility", "wheelchair"],
+    id: "jack-darling",
+    name: "Jack Darling Memorial Park",
+    type: "Waterfront park",
+    address: "1180 Lakeshore Rd W, Mississauga",
+    coords: [43.5257765, -79.6045342],
+    level: "Strong",
     score: 88,
-    summary: "A social indoor stop with warm lighting, soft seating, accessible tables, and quiet corner choices.",
-    tags: ["Accessible tables", "Soft seating", "Quiet corner"],
-    risks: ["Background music", "Narrow counter line", "Warm low lighting"],
-    checklist: ["Choose a table near the wall", "Ask staff to bring the order", "Avoid the counter queue if crowded"],
-    route: "Best arrival: enter from the side door, move to the right-side seating area, and choose the wide table row."
+    comfort: "High",
+    source: "https://www.mississauga.ca/events-and-attractions/parks/jack-darling-memorial-park/",
+    tour: "http://43.135.167.74//tour/21673327b1cc0f62",
+    description: "Waterfront trail, parking, washrooms, picnic areas, and outdoor rest points.",
+    path: "Start from accessible parking, follow the paved Waterfront Trail, and use benches as planned rest points.",
+    steps: ["Parking", "Waterfront Trail", "Benches", "Washroom"],
+    spots: [
+      spot("Waterfront trail", "Pathway", "Main outdoor route by Lake Ontario.", ["Pathway", "Seating"], ["Paved trail section", "Open view for orientation", "Surface may change with weather"]),
+      spot("Accessible parking", "Parking", "Shorter arrival route from parking to park access.", ["Parking", "Entrance"], ["Parking is listed as a park facility", "Best starting point for low walking tolerance"]),
+      spot("Public washroom", "Washroom", "Useful facility to confirm before a longer visit.", ["Washroom"], ["Washrooms are listed as a park facility", "Check seasonal availability before leaving"])
+    ],
+    features: {
+      Entrance: feature("Strong", "Open park entry", "Outdoor access points are broad and easy to identify."),
+      Pathway: feature("Moderate", "Waterfront Trail", "A paved section of the Waterfront Trail crosses the park."),
+      Seating: feature("Strong", "Benches and rest areas", "Use seating as rest points along the route."),
+      Washroom: feature("Check first", "Public washroom", "Washrooms are listed, but users should confirm opening conditions."),
+      Parking: feature("Strong", "Parking facility", "Parking is listed as a park facility.")
+    }
   },
   {
-    id: "city-hall",
-    title: "City Hall Service Counter",
-    category: "service",
-    visualPosition: "100% 100%",
-    mode: ["wheelchair", "mobility", "lowvision"],
+    id: "clarkson-pump",
+    name: "The Clarkson Pump & Patio",
+    type: "Restaurant and patio",
+    address: "1744 Lakeshore Rd W, Mississauga",
+    coords: [43.5169623, -79.6231494],
+    level: "Moderate",
+    score: 80,
+    comfort: "Medium",
+    source: "https://www.clarksonpump.com/",
+    tour: "http://43.135.167.74//tour/f1475bee78903eb6",
+    description: "Restaurant with patio seating, indoor seating, washroom route, and nearby parking.",
+    path: "Arrive from Lakeshore Road West, enter through the main entrance, then choose indoor or patio seating based on noise and space.",
+    steps: ["Entrance", "Host area", "Seating", "Washroom"],
+    spots: [
+      spot("Step-free entrance", "Entrance", "Primary entry point to review first.", ["Entrance", "Pathway"], ["Check threshold comfort", "Use staff help if the entrance is busy"]),
+      spot("Patio seating", "Seating", "Outdoor seating option with more open air.", ["Seating", "Lighting / Quietness"], ["Good option in mild weather", "Noise depends on time of day"]),
+      spot("Washroom access", "Washroom", "Route should be checked before relying on it.", ["Washroom", "Pathway"], ["Ask staff for the easiest route", "Confirm turning space"])
+    ],
+    features: {
+      Entrance: feature("Check first", "Restaurant entry", "Restaurant entrances should be checked for threshold, door width, and crowding."),
+      Pathway: feature("Moderate", "Dining circulation", "Table placement can affect movement inside."),
+      Seating: feature("Strong", "Indoor and patio seating", "Multiple seating choices help users choose a calmer area."),
+      Washroom: feature("Check first", "Washroom route", "Confirm the route and space before visiting."),
+      Parking: feature("Moderate", "Nearby parking", "Parking exists nearby but availability may vary.")
+    }
+  },
+  {
+    id: "port-credit",
+    name: "Port Credit",
+    type: "Waterfront district",
+    address: "Port Credit, Mississauga",
+    coords: [43.5560546, -79.5870828],
+    level: "Strong",
     score: 86,
-    summary: "A civic service visit with ticketing support, accessible counters, seating, and visible staff points.",
-    tags: ["Accessible counter", "Queue support", "High contrast signs"],
-    risks: ["Ticket machine confusion", "Long wait times", "Multiple service windows"],
-    checklist: ["Prepare documents before arrival", "Use the seated waiting area", "Ask for queue assistance"],
-    route: "Best arrival: use the main accessible entrance, collect a ticket with staff help, then wait in the front seating area."
+    comfort: "High",
+    source: "https://www.portcredit.com/maps-parking/",
+    tour: "http://43.135.167.74//tour/b918ca8e7f21f65c",
+    description: "Walkable waterfront district with sidewalks, trails, seating, transit access, and parking options.",
+    path: "Use Port Credit GO or nearby parking, then follow sidewalks and waterfront trails toward the public seating areas.",
+    steps: ["Transit/Parking", "Sidewalk", "Waterfront", "Seating"],
+    spots: [
+      spot("Waterfront walkway", "Pathway", "Main route for orientation and movement.", ["Pathway", "Seating"], ["Sidewalks and walking trails support walking routes", "Can be busy during events"]),
+      spot("Transit access", "Entrance", "GO Station is close to the waterfront.", ["Entrance", "Pathway"], ["Good non-driving option", "Plan crossings and final walking distance"]),
+      spot("Parking area", "Parking", "Parking option near Port Credit destinations.", ["Parking"], ["Accessible parking is available at some Port Credit lots", "Availability may vary"])
+    ],
+    features: {
+      Entrance: feature("Strong", "Multiple arrival choices", "Arrive by train, walking route, or parking."),
+      Pathway: feature("Strong", "Sidewalks and trails", "Port Credit describes businesses and events as accessible along sidewalks and walking trails."),
+      Seating: feature("Moderate", "Public seating", "Public seating supports rest during waterfront visits."),
+      Parking: feature("Moderate", "Parking options", "Parking is available, with accessible parking listed for some lots."),
+      "Lighting / Quietness": feature("Moderate", "Busy district", "Visit outside event times for lower crowding.")
+    }
+  },
+  {
+    id: "bradley-museum",
+    name: "Bradley Museum",
+    type: "Historic site",
+    address: "1620 Orr Rd, Mississauga",
+    coords: [43.5118731, -79.6110489],
+    level: "Limited",
+    score: 66,
+    comfort: "Mixed",
+    source: "https://www.mississauga.ca/arts-and-culture/locations/bradley-museum/",
+    tour: "http://43.135.167.74//tour/d873aacb64c1e434",
+    description: "Historic site with free parking, accessible washroom, outdoor property access, and possible building barriers.",
+    path: "Start from parking, confirm the accessible washroom and ramp/pathway options, then review which historic buildings are suitable.",
+    steps: ["Parking", "Pathway", "Accessible washroom", "Historic buildings"],
+    spots: [
+      spot("Historic site access", "Entrance", "Review the site entry and building access limits.", ["Entrance", "Pathway"], ["Historic properties may include barriers", "Some buildings may not be step-free"]),
+      spot("Ramp and pathway", "Pathway", "Outdoor route and ramp information should be checked.", ["Pathway"], ["Plan slower movement", "Surface and level changes matter"]),
+      spot("Parking", "Parking", "Useful arrival support close to the site.", ["Parking", "Entrance"], ["Free parking is listed", "Confirm route from parking"])
+    ],
+    features: {
+      Entrance: feature("Check first", "Historic entrances", "Some historic buildings can include steps or limited entry routes."),
+      Pathway: feature("Moderate", "Outdoor paths", "Outdoor property access is useful but should be reviewed before arrival."),
+      Washroom: feature("Strong", "Accessible washroom", "The City lists an accessible washroom for Bradley Museum."),
+      Parking: feature("Strong", "Free parking", "The City lists free parking."),
+      "Lighting / Quietness": feature("Strong", "Calmer cultural site", "A museum setting can support a slower visit.")
+    }
+  },
+  {
+    id: "sheridan-study",
+    name: "Sheridan Quiet Study Room",
+    type: "Campus study room",
+    address: "4180 Duke of York Blvd, Mississauga",
+    coords: [43.5911998, -79.6480973],
+    level: "Strong",
+    score: 92,
+    comfort: "High",
+    source: "https://www.sheridancollege.ca/about/campus-locations/hmc/group-study-rooms",
+    tour: "http://43.135.167.74//tour/13a67d36f9337915",
+    description: "Quiet study room environment with computer station, moveable furniture, curtains, reduced glare, and desk access.",
+    path: "Arrive at Hazel McCallion Campus, confirm room booking or availability, then choose the desk setup with the least glare.",
+    steps: ["Campus entry", "Study room", "Desk", "Light control"],
+    spots: [
+      spot("Quiet study environment", "Quiet", "Low-distraction area for study.", ["Lighting / Quietness", "Seating"], ["Reduced noise", "Good for focus", "Confirm room availability"]),
+      spot("Computer station", "Desk", "Desk-based work area.", ["Seating", "Pathway"], ["Accessible study desk", "Moveable small table nearby"]),
+      spot("Light-control curtains", "Lighting", "Supports reduced glare.", ["Lighting / Quietness"], ["Curtains reduce glare", "Better visual comfort"])
+    ],
+    features: {
+      Entrance: feature("Strong", "Campus study rooms", "Sheridan lists study rooms at Hazel McCallion Campus."),
+      Pathway: feature("Strong", "Indoor route", "Indoor campus routes support predictable navigation."),
+      Seating: feature("Strong", "Accessible desk setup", "Moveable furniture supports desk-based access."),
+      Washroom: feature("Check first", "Building facilities", "Confirm nearest accessible washroom in the building."),
+      "Lighting / Quietness": feature("Strong", "Quiet and reduced glare", "Curtains and quiet room conditions support sensory and visual comfort.")
+    }
   }
 ];
 
-const originalLocations = [
-  {
-    id: "cologne-cathedral",
-    title: "Cologne Cathedral",
-    category: "Landmark",
-    mode: ["wheelchair", "lowvision", "mobility", "sensory"],
-    coordinates: [50.9413, 6.9583],
-    score: 88,
-    summary: "A major Gothic landmark and public square where accessibility is connected to orientation, seating, safe walking routes, and night visibility.",
-    tags: ["Visual orientation", "Public seating", "Safe route", "Night visibility"],
-    hotspots: ["Gothic landmark orientation", "Public seating area", "Safe walking route", "Night visibility point"],
-    notes: "Main entrance has step-free access via the south side ramp.",
-    iframeUrl: "http://43.135.167.74//tour/16be8e194d36dc33",
-    route: "Best arrival: use the south-side ramp, pause near the public seating area, then use the cathedral facade as a visual orientation anchor."
-  },
-  {
-    id: "vintage-cafe-book-lounge",
-    title: "Vintage Cafe and Book Lounge",
-    category: "Indoor Lounge / Cafe",
-    mode: ["wheelchair", "sensory", "mobility"],
-    coordinates: [43.518533, -79.612641],
-    score: 91,
-    summary: "An indoor cafe and book lounge with elevator access, reading areas, projection, warm lighting, wide circulation, and comfortable seating.",
-    tags: ["Elevator", "Step-free movement", "Wide turning space", "Quiet area"],
-    hotspots: ["Elevator access point", "Quiet cafe lounge", "Vintage projection corner", "Quiet reading shelf", "Wide indoor pathway"],
-    notes: "Quiet hours are 2-4 PM daily for sensory-sensitive visitors.",
-    iframeUrl: "http://43.135.167.74//tour/2cd8ff34b0de5a8f",
-    route: "Best arrival: use the elevator access point, choose the wide indoor pathway, then sit near the quiet reading shelf."
-  },
-  {
-    id: "tulip-park-rest-area",
-    title: "Tulip Park Rest Area",
-    category: "Park / Outdoor Public Space",
-    mode: ["wheelchair", "sensory", "lowvision", "mobility"],
-    coordinates: [43.52, -79.61],
-    score: 90,
-    summary: "A natural outdoor space with rest benches, tulip views, quiet sensory zones, open visibility, and gentle walking paths.",
-    tags: ["Public seating", "Quiet area", "Wheelchair friendly path", "Open visibility"],
-    hotspots: ["Tulip view rest bench", "Sensory calm zone", "Open visibility area", "Gentle walking path"],
-    notes: "All paths have maximum 5% gradient for wheelchair accessibility.",
-    iframeUrl: "http://43.135.167.74//tour/894354a8c0d0e98e",
-    route: "Best arrival: begin on the gentle walking path, stop at the tulip view rest bench, then continue through the open visibility area."
-  }
-];
+function spot(name, label, summary, categories, notes) {
+  return { name, label, summary, categories, notes };
+}
 
-const state = {
-  mode: "all",
-  category: "all",
-  query: "",
-  selectedId: null,
-  selectedOriginalId: "cologne-cathedral",
-  plan: []
-};
+function feature(status, title, detail) {
+  return { status, title, detail };
+}
 
-const sceneGrid = document.querySelector("#sceneGrid");
-const sceneDetail = document.querySelector("#sceneDetail");
-const planList = document.querySelector("#visitPlanList");
-const plannerSummary = document.querySelector("#plannerSummary");
-const priorityFeedback = document.querySelector("#priorityFeedback");
-const originalLocationList = document.querySelector("#originalLocationList");
-const previewPanel = document.querySelector("#previewPanel");
-const planCount = document.querySelector("#planCount");
-const planTotal = document.querySelector("#planTotal");
-const speechStatus = document.querySelector("#speechStatus");
-const toast = document.querySelector("#toast");
+let activeLocation = locations[0];
+let activeSpot = activeLocation.spots[0];
+let activePanel = "mapPanel";
 let accessMap;
-let accessMarkers = [];
-let speechChunks = [];
-let speechIndex = 0;
-let speechStopped = true;
-let activeUtterance = null;
+let markers = [];
+let externalMarker;
+let searchTimer;
+let speaking = false;
+let searchResultCache = [];
+let pendingPhoto = "";
+let pendingSuggestedPhoto = "";
+const reviewStorageKey = "accessMapCommunityReviewsV3";
+const suggestedPlaceStorageKey = "accessMapSuggestedPlacesV2";
+let communityReviews = loadCommunityReviews();
+let suggestedPlaces = loadSuggestedPlaces();
 
-const modeCopy = {
-  all: {
-    label: "all access needs",
-    guidance: "Showing all places. Choose a specific priority to narrow the recommendations."
-  },
-  wheelchair: {
-    label: "wheelchair access",
-    guidance: "Showing places with step-free movement, wider circulation, elevators, or smooth paths."
-  },
-  lowvision: {
-    label: "low vision support",
-    guidance: "Showing places with stronger orientation cues, clear signage, lighting, or audio support."
-  },
-  sensory: {
-    label: "sensory comfort",
-    guidance: "Showing calmer places with quiet zones, lower crowding, or predictable routes."
-  },
-  mobility: {
-    label: "rest and mobility support",
-    guidance: "Showing places with seating, shorter walking distances, gentle paths, and clear service points."
-  }
+const starterReviews = {
+  "jack-darling": [
+    review("Maya", 5, "Accessible parking was easy to locate.", false, "2026-06-18"),
+    review("Community visitor", 4, "Pathway became slippery after rain.", true, "2026-06-12")
+  ],
+  "clarkson-pump": [
+    review("Alex", 4, "Automatic door was working during my visit.", false, "2026-06-17"),
+    review("Sam", 3, "Patio seating felt easier than the indoor route during a busy hour.", false, "2026-06-10")
+  ],
+  "port-credit": [
+    review("Nina", 5, "Waterfront seating helped with rest breaks.", false, "2026-06-14"),
+    review("Jordan", 4, "Some crossings were busy, but the walkway was clear.", false, "2026-06-09")
+  ],
+  "bradley-museum": [
+    review("Lee", 3, "Historic building access should be checked before visiting.", false, "2026-06-16"),
+    review("Visitor", 4, "Parking was close and easy to understand.", false, "2026-06-08")
+  ],
+  "sheridan-study": [
+    review("Siwei", 5, "Quiet room was comfortable for studying.", false, "2026-06-19"),
+    review("Student visitor", 5, "Curtains helped reduce glare on the desk.", false, "2026-06-11")
+  ]
 };
 
-function accessMatchLabel(score) {
-  if (score >= 90) return "Accessibility Match: Strong";
-  if (score >= 82) return "Accessibility Match: Good";
-  return "Accessibility Match: Basic";
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+function review(name, rating, comment, barrier, date, photo) {
+  return { name, rating, comment, barrier, date, photo: photo || "" };
 }
 
-function iconSvg(category) {
-  const paths = {
-    outdoor: '<path d="M18 70h46M28 70V42m26 28V34M22 42h42l-21-22z" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>',
-    indoor: '<path d="M20 70h44V30L42 18 20 30v40zM34 70V48h16v22" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>',
-    service: '<path d="M22 66h40M26 30h32M30 30v36m24-36v36M22 30l20-12 20 12M34 46h16" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>',
-    transit: '<path d="M24 20h36c5 0 8 4 8 9v26c0 5-4 9-9 9H25c-5 0-9-4-9-9V29c0-5 4-9 8-9zM16 40h52M28 70l6-6m22 6-6-6" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>'
-  };
-  return `<svg viewBox="0 0 84 84" aria-hidden="true">${paths[category] || paths.indoor}</svg>`;
+function init() {
+  renderLocationOptions();
+  renderMap();
+  bindEvents();
+  renderAll();
 }
 
-function filteredScenes() {
-  return scenes.filter((scene) => {
-    const modeMatch = state.mode === "all" || scene.mode.includes(state.mode);
-    const categoryMatch = state.category === "all" || scene.category === state.category;
-    const queryText = [scene.title, scene.summary, scene.category, ...scene.tags, ...scene.risks].join(" ").toLowerCase();
-    const queryMatch = !state.query || queryText.includes(state.query.toLowerCase());
-    return modeMatch && categoryMatch && queryMatch;
+function renderLocationOptions() {
+  $("#locationSelect").innerHTML = locations
+    .map((location, index) => `<option value="${index}">${location.name}</option>`)
+    .join("");
+  renderSearchResults("");
+}
+
+function renderMap() {
+  if (!window.L) {
+    showFallbackMap("Interactive street map is unavailable. Use this prepared place overview instead.");
+    return;
+  }
+
+  $("#mapFallback").classList.remove("visible");
+  accessMap = L.map("streetMap", {
+    scrollWheelZoom: false,
+    zoomControl: true
+  }).setView(activeLocation.coords, 13);
+
+  const baseLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    subdomains: "abc",
+    maxZoom: 19
+  });
+
+  let loadedTiles = 0;
+  let failedTiles = 0;
+  baseLayer.on("tileload", () => {
+    loadedTiles += 1;
+    $("#mapFallback").classList.remove("visible");
+  });
+  baseLayer.on("tileerror", () => {
+    failedTiles += 1;
+  });
+  baseLayer.addTo(accessMap);
+
+  markers = locations.map((location, index) => {
+    const icon = L.divIcon({
+      className: "",
+      html: `<button class="access-marker" aria-label="${location.name}">${mapIcon(location.type)}</button>`,
+      iconSize: [34, 34],
+      iconAnchor: [17, 17]
+    });
+    const marker = L.marker(location.coords, { icon }).addTo(accessMap);
+    marker.bindPopup(`<strong>${location.name}</strong><br>${location.address}`);
+    marker.bindTooltip(location.name, {
+      permanent: true,
+      direction: "top",
+      offset: [0, -18],
+      className: "map-label"
+    });
+    marker.openTooltip();
+    marker.on("click", () => selectLocation(index, false));
+    return marker;
+  });
+
+  const bounds = L.latLngBounds(locations.map((location) => location.coords));
+  accessMap.fitBounds(bounds, { padding: [44, 44] });
+
+  setTimeout(() => {
+    if (loadedTiles === 0 || failedTiles >= 6) {
+      showFallbackMap("Street map tiles did not load here. Prepared example places are still marked below.");
+    }
+  }, 3200);
+}
+
+function showFallbackMap(message) {
+  const fallback = $("#mapFallback");
+  const latitudes = locations.map((location) => location.coords[0]);
+  const longitudes = locations.map((location) => location.coords[1]);
+  const minLat = Math.min(...latitudes);
+  const maxLat = Math.max(...latitudes);
+  const minLng = Math.min(...longitudes);
+  const maxLng = Math.max(...longitudes);
+  const latRange = maxLat - minLat || 1;
+  const lngRange = maxLng - minLng || 1;
+
+  fallback.innerHTML = `
+    <div class="fallback-map-card">
+      <div>
+        <p class="eyebrow">Location overview</p>
+        <h2>Prepared examples are marked here.</h2>
+        <p>${message}</p>
+      </div>
+      <div class="fallback-map-canvas" aria-label="Simplified map of prepared example locations">
+        <span class="map-water" aria-hidden="true"></span>
+        <span class="map-road road-one" aria-hidden="true"></span>
+        <span class="map-road road-two" aria-hidden="true"></span>
+        ${locations.map((location, index) => {
+          const left = 10 + ((location.coords[1] - minLng) / lngRange) * 78;
+          const top = 12 + ((maxLat - location.coords[0]) / latRange) * 76;
+          return `
+            <button class="fallback-pin ${location.id === activeLocation.id ? "active" : ""}" type="button" data-fallback-location="${index}" style="left:${left}%; top:${top}%">
+              <span>${mapIcon(location.type)}</span>
+              <strong>${location.name}</strong>
+            </button>
+          `;
+        }).join("")}
+      </div>
+    </div>
+  `;
+  fallback.classList.add("visible");
+  $$("[data-fallback-location]").forEach((button) => {
+    button.addEventListener("click", () => selectLocation(Number(button.dataset.fallbackLocation), false));
   });
 }
 
-function renderScenes() {
-  const items = filteredScenes();
-  sceneGrid.innerHTML = items.map((scene) => `
-    <article class="scene-card ${state.selectedId === scene.id ? "is-selected" : ""} ${state.mode !== "all" ? "is-recommended" : ""}" data-scene="${scene.id}" tabindex="0" role="button" aria-label="Open ${scene.title} details">
-      <div class="scene-visual scene-photo" style="background-position: ${scene.visualPosition};"></div>
-      ${state.mode !== "all" ? `<span class="recommendation-label">Matches ${modeCopy[state.mode].label}</span>` : ""}
-      <h3>${scene.title}</h3>
-      <p>${scene.summary}</p>
-      <div class="tag-list">${scene.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>
-      <div class="card-actions">
-        <button class="text-button" data-open="${scene.id}" type="button">Open</button>
-        <button class="text-button" data-speak-scene="${scene.id}" type="button">Listen</button>
-        <button class="text-button" data-add="${scene.id}" type="button">Add to Plan</button>
-      </div>
-    </article>
-  `).join("") || "<p>No scenes match the current filters.</p>";
+function bindEvents() {
+  $("#locationSelect").addEventListener("change", (event) => {
+    selectLocation(Number(event.target.value), true);
+  });
+
+  $("#locationSearch").addEventListener("input", (event) => {
+    renderSearchResults(event.target.value);
+  });
+
+  $$("[data-quick-search]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const query = button.dataset.quickSearch;
+      $("#locationSearch").value = query;
+      renderSearchResults(query);
+    });
+  });
+
+  $$(".nav-item").forEach((button) => {
+    button.addEventListener("click", () => {
+      $$(".nav-item").forEach((item) => item.classList.remove("active"));
+      button.classList.add("active");
+      const view = button.dataset.view;
+      if (view === "map") {
+        showPanel("mapPanel");
+        $(".viewer-card").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      if (view === "tour") {
+        showPanel("tourPanel");
+        $(".viewer-card").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      if (view === "access") {
+        $("#accessOverview").scrollIntoView({ behavior: "smooth", block: "center" });
+        $(".right-panel").classList.add("focus-pulse");
+        setTimeout(() => $(".right-panel").classList.remove("focus-pulse"), 900);
+      }
+      if (view === "overview") {
+        $(".stage-header").scrollIntoView({ behavior: "smooth", block: "start" });
+        showPanel("mapPanel");
+      }
+    });
+  });
+
+  $$(".tab-button").forEach((button) => {
+    button.addEventListener("click", () => showPanel(button.dataset.panel));
+  });
+
+  $("#directionsButton").addEventListener("click", () => {
+    const [lat, lng] = activeLocation.coords;
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`, "_blank", "noreferrer");
+  });
+
+  $("#shareButton").addEventListener("click", async () => {
+    const text = `${activeLocation.name} - AccessMap Journey`;
+    if (navigator.share) {
+      await navigator.share({ title: text, url: window.location.href }).catch(() => {});
+    } else if (navigator.clipboard) {
+      await navigator.clipboard.writeText(window.location.href);
+      $("#speechStatus").textContent = "Link copied.";
+    }
+  });
+
+  $("#saveButton").addEventListener("click", () => {
+    $("#speechStatus").textContent = `${activeLocation.name} saved for review.`;
+  });
+
+  $("#contrastButton").addEventListener("click", () => {
+    document.documentElement.classList.toggle("high-contrast");
+  });
+
+  $$("[data-font]").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.documentElement.classList.remove("font-large", "font-xlarge");
+      if (button.dataset.font === "large") document.documentElement.classList.add("font-large");
+      if (button.dataset.font === "xlarge") document.documentElement.classList.add("font-xlarge");
+    });
+  });
+
+  $("#readButton").addEventListener("click", readCurrentView);
+  $("#stopButton").addEventListener("click", stopSpeech);
+
+  $("#reviewPhoto").addEventListener("change", handlePhotoUpload);
+  $("#feedbackForm").addEventListener("submit", submitReview);
+  $("#suggestPhoto").addEventListener("change", handleSuggestedPhotoUpload);
+  $("#suggestPlaceForm").addEventListener("submit", submitSuggestedPlace);
 }
 
-function renderOriginalLocations() {
-  originalLocationList.innerHTML = originalLocations.map((location) => `
-    <button class="original-location-card ${state.selectedOriginalId === location.id ? "is-active" : ""}" data-original="${location.id}" type="button">
-      <strong>${location.title}</strong>
-      <span>${location.category}</span>
-      <span>${accessMatchLabel(location.score)}</span>
-      ${state.mode !== "all" && location.mode.includes(state.mode) ? `<span class="match-pill">Matches ${modeCopy[state.mode].label}</span>` : ""}
-    </button>
-  `).join("");
+function getSearchText(location) {
+  return [
+    location.name,
+    location.type,
+    location.address,
+    location.description,
+    location.level,
+    location.comfort,
+    location.steps.join(" "),
+    location.spots.map((spotItem) => `${spotItem.name} ${spotItem.label} ${spotItem.summary} ${spotItem.notes.join(" ")}`).join(" ")
+  ].join(" ").toLowerCase();
 }
 
-function streetMapUrl(location) {
-  const [lat, lng] = location.coordinates;
-  return `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=17/${lat}/${lng}`;
+function getSearchScore(location, query) {
+  const fields = [
+    [location.name, 8],
+    [location.type, 5],
+    [location.address, 4],
+    [location.description, 4],
+    [location.comfort, 3],
+    [location.level, 3],
+    [location.steps.join(" "), 5],
+    [location.spots.map((spotItem) => `${spotItem.name} ${spotItem.label}`).join(" "), 6],
+    [location.spots.map((spotItem) => `${spotItem.summary} ${spotItem.notes.join(" ")}`).join(" "), 4]
+  ];
+
+  return fields.reduce((score, [value, weight]) => {
+    return String(value).toLowerCase().includes(query) ? score + weight : score;
+  }, 0);
 }
 
-function directionsUrl(location) {
-  const [lat, lng] = location.coordinates;
-  return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking`;
+function renderSearchResults(query) {
+  const cleanQuery = query.trim().toLowerCase();
+  clearTimeout(searchTimer);
+
+  if (!cleanQuery) {
+    $("#searchResults").innerHTML = "";
+    searchResultCache = [];
+    return;
+  }
+
+  const matches = locations
+    .map((location) => ({ location, score: getSearchScore(location, cleanQuery) }))
+    .filter((item) => item.score > 0 || getSearchText(item.location).includes(cleanQuery))
+    .sort((a, b) => b.score - a.score)
+    .map((item) => item.location);
+
+  renderSearchList(matches, [], cleanQuery, true);
+
+  searchTimer = setTimeout(() => {
+    searchOpenPlaces(cleanQuery, matches);
+  }, 420);
 }
 
-function renderTourFrame(location) {
-  const isMixedContent = window.location.protocol === "https:" && location.iframeUrl.startsWith("http://");
+function renderSearchList(matches, externalResults, query, loading) {
+  searchResultCache = externalResults;
+  const caseMarkup = matches.slice(0, 4).map((location) => {
+    const index = locations.findIndex((item) => item.id === location.id);
+    return `<button class="search-chip case-result" type="button" data-search-location="${index}"><span>Ready</span>${location.name}</button>`;
+  }).join("");
 
-  if (isMixedContent) {
+  const externalMarkup = externalResults.slice(0, 4).map((result, index) => {
+    return `<button class="search-chip open-result" type="button" data-open-result="${index}"><span>Map</span>${result.name}</button>`;
+  }).join("");
+
+  const loadingMarkup = loading ? `<span class="status">Searching public map places...</span>` : "";
+  $("#searchResults").innerHTML = caseMarkup + externalMarkup + loadingMarkup;
+
+  if (!matches.length && !externalResults.length && !loading) {
+    $("#searchResults").innerHTML = `<span class="status">No places found. Try a place name or address.</span>`;
+  }
+
+  $$("[data-search-location]").forEach((button) => {
+    button.addEventListener("click", () => {
+      selectLocation(Number(button.dataset.searchLocation), true);
+      $("#locationSearch").value = "";
+      renderSearchResults("");
+    });
+  });
+
+  $$("[data-open-result]").forEach((button) => {
+    button.addEventListener("click", () => {
+      previewOpenSearchResult(searchResultCache[Number(button.dataset.openResult)]);
+      $("#locationSearch").value = "";
+      renderSearchResults("");
+    });
+  });
+}
+
+async function searchOpenPlaces(query, localMatches) {
+  const url = `https://nominatim.openstreetmap.org/search?format=json&limit=5&addressdetails=1&q=${encodeURIComponent(query)}`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Map search failed");
+    const results = await response.json();
+    const mapped = results
+      .filter((item) => item.lat && item.lon)
+      .map((item) => ({
+        name: item.name || item.display_name.split(",")[0],
+        address: item.display_name,
+        coords: [Number(item.lat), Number(item.lon)],
+        type: item.type || item.class || "place"
+      }));
+    if ($("#locationSearch").value.trim().toLowerCase() === query) {
+      renderSearchList(localMatches, mapped, query, false);
+    }
+  } catch (error) {
+    if ($("#locationSearch").value.trim().toLowerCase() === query) {
+      renderSearchList(localMatches, [], query, false);
+    }
+  }
+}
+
+function previewOpenSearchResult(result) {
+  if (!result || !accessMap) return;
+  if (externalMarker) {
+    accessMap.removeLayer(externalMarker);
+  }
+  const icon = L.divIcon({
+    className: "",
+    html: `<button class="access-marker external" aria-label="${result.name}">⌕</button>`,
+    iconSize: [38, 38],
+    iconAnchor: [19, 19]
+  });
+  externalMarker = L.marker(result.coords, { icon }).addTo(accessMap);
+  externalMarker.bindPopup(`<strong>${result.name}</strong><br>${result.address}`).openPopup();
+  externalMarker.bindTooltip(result.name, {
+    permanent: true,
+    direction: "top",
+    offset: [0, -20],
+    className: "map-label external-label"
+  });
+  externalMarker.openTooltip();
+  accessMap.setView(result.coords, 16);
+  showPanel("mapPanel");
+
+  $("#locationType").textContent = result.type;
+  $("#locationName").textContent = result.name;
+  $("#locationDescription").textContent = result.address;
+  $("#levelPill").textContent = "Map search result";
+  $("#spotName").textContent = "Accessibility details not confirmed";
+  $("#spotSummary").textContent = "This place was found through public map search. Use it for orientation, then confirm entrance, washroom, seating, parking, and quietness before visiting.";
+  $("#spotNote").textContent = "AccessMap Journey shows confirmed details for prepared locations. Public map results should be checked before visiting.";
+  $("#sourceLink").href = `https://www.openstreetmap.org/search?query=${encodeURIComponent(result.address)}`;
+  $("#sourceLink").textContent = "Open in OpenStreetMap";
+  $("#featureList").innerHTML = "";
+  $("#placeDetails").innerHTML = renderPlaceDetails({
+    Accessibility: ["Entrance needs confirmation", "Pathway needs confirmation", "Washroom needs confirmation", "Parking needs confirmation"]
+  });
+  $("#communityFeedback").classList.add("disabled");
+  $("#reviewList").innerHTML = `<article class="review-card"><p>Community feedback is available for prepared locations. Search results can still be used for orientation.</p></article>`;
+  $("#reviewCount").textContent = "Map result";
+  $("#accessOverview").innerHTML = `
+    <h3>Check before visiting</h3>
+    <div class="access-chip-grid">
+      ${["Entrance", "Pathway", "Seating", "Washroom", "Parking"].map((item) => `
+        <div class="access-chip">
+          <span>${accessIcon(item)}</span>
+          <div><strong>${item}</strong><small>Needs confirmation for this public map result.</small></div>
+          <em>Check</em>
+        </div>
+      `).join("")}
+    </div>
+  `;
+  $("#mapCaption").textContent = `${result.address}. Public map search result from OpenStreetMap.`;
+}
+
+function showPanel(panelId) {
+  activePanel = panelId;
+  document.body.classList.toggle("tour-mode", panelId === "tourPanel");
+  $$(".tab-button").forEach((button) => button.classList.toggle("active", button.dataset.panel === panelId));
+  $$(".viewer-panel").forEach((panel) => panel.classList.toggle("active", panel.id === panelId));
+  if (panelId === "mapPanel" && accessMap) {
+    setTimeout(() => {
+      accessMap.invalidateSize();
+      accessMap.setView(activeLocation.coords, 15);
+    }, 120);
+  }
+}
+
+function selectLocation(index, openMap) {
+  activeLocation = locations[index];
+  activeSpot = activeLocation.spots[0];
+  $("#locationSelect").value = String(index);
+  renderAll();
+  if (accessMap) {
+    accessMap.setView(activeLocation.coords, 15);
+    markers[index].openPopup();
+  }
+  if (openMap) showPanel("mapPanel");
+}
+
+function selectSpot(index) {
+  activeSpot = activeLocation.spots[index];
+  renderRightPanel();
+  renderSpots();
+}
+
+function renderAll() {
+  $("#locationType").textContent = activeLocation.type;
+  $("#locationName").textContent = activeLocation.name;
+  $("#locationDescription").textContent = activeLocation.description;
+  $("#levelPill").textContent = `${activeLocation.level} access · ${activeLocation.score}/100`;
+  $("#railComfort").textContent = activeLocation.comfort;
+  $("#pathSummary").textContent = activeLocation.path;
+  $("#sourceLink").href = activeLocation.source;
+  $("#sourceLink").textContent = `Source for ${activeLocation.name}`;
+  $("#mapCaption").textContent = `${activeLocation.address}. Map uses OpenStreetMap coordinates for orientation and planning.`;
+  $("#tourWrap").innerHTML = renderTour(activeLocation);
+  $("#pathSteps").innerHTML = activeLocation.steps.map((step, index) => `<li><span>${index + 1}</span>${step}</li>`).join("");
+  if ($("#mapFallback").classList.contains("visible")) {
+    showFallbackMap("Street map tiles did not load here. Prepared example places are still marked below.");
+  }
+  renderSpots();
+  renderRightPanel();
+  renderReviews();
+  renderSuggestedPlaces();
+}
+
+function renderTour(location) {
+  const securePage = window.location.protocol === "https:";
+  const httpTour = location.tour.startsWith("http://");
+  if (securePage && httpTour) {
     return `
-      <div class="tour-frame-wrap tour-frame-fallback">
+      <div class="tour-fallback">
         <div>
-          <strong>Open the 360 view</strong>
-          <p>The immersive tour is available as a separate full-screen view.</p>
-          <a class="control-button" href="${location.iframeUrl}" target="_blank" rel="noreferrer">Open 360 View</a>
+          <p class="eyebrow">360 preview</p>
+          <h2>Open the immersive view</h2>
+          <p>This tour opens as a full-screen preview from the original tour host.</p>
+          <a href="${location.tour}" target="_blank" rel="noreferrer">Open 360 Preview</a>
         </div>
       </div>
     `;
   }
-
-  return `
-    <div class="tour-frame-wrap">
-      <iframe
-        src="${location.iframeUrl}"
-        title="360 degree preview of ${location.title}"
-        allowfullscreen
-        aria-label="360 degree preview of ${location.title}"
-      ></iframe>
-    </div>
-  `;
+  return `<iframe src="${location.tour}" title="360 preview of ${location.name}" allowfullscreen></iframe>`;
 }
 
-function renderPreview(location) {
-  state.selectedOriginalId = location.id;
-  previewPanel.innerHTML = `
-    <div class="preview-shell">
-      <div>
-        <p class="eyebrow">360 immersive preview</p>
-        <h3>${location.title}</h3>
-        <p>${location.summary}</p>
-        ${renderTourFrame(location)}
-      </div>
-      <div class="preview-meta">
-        <div class="match-score" aria-label="${accessMatchLabel(location.score)}">
-          <span>${accessMatchLabel(location.score)}</span>
-        </div>
-        <h4>Accessibility Hotspots</h4>
-        <ul class="hotspot-list">${location.hotspots.map((item) => `<li>${item}</li>`).join("")}</ul>
-        <h4>Visit Guidance</h4>
-        <p>${location.route}</p>
-        <h4>Street Map & Navigation</h4>
-        <p>Open the location on a street map or start walking directions.</p>
-        <div class="map-link-row">
-          <a class="control-button secondary" href="${streetMapUrl(location)}" target="_blank" rel="noreferrer">Street Map</a>
-          <a class="control-button secondary" href="${directionsUrl(location)}" target="_blank" rel="noreferrer">Directions</a>
-        </div>
-        <h4>Notes</h4>
-        <p>${location.notes}</p>
-        <div class="tag-list">${location.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>
-        <div class="detail-actions">
-          <button class="control-button" data-speak-original="${location.id}" type="button">Read 360 Scene</button>
-          <button class="control-button secondary" data-add="${location.id}" type="button">Add to Plan</button>
-          <a class="text-button" href="${location.iframeUrl}" target="_blank" rel="noreferrer">Open 360</a>
-        </div>
-      </div>
-    </div>
-  `;
-  renderOriginalLocations();
+function renderSpots() {
+  $("#spotStrip").innerHTML = locations.map((location, index) => `
+    <button class="spot-card ${location.id === activeLocation.id ? "active" : ""}" type="button" data-location-card="${index}">
+      <span class="spot-thumb" aria-hidden="true">${mapIcon(location.type)}</span>
+      <strong>${location.name}</strong>
+      <small>${location.type} · ${location.comfort}</small>
+    </button>
+  `).join("");
+
+  $$("#spotStrip [data-location-card]").forEach((button) => {
+    button.addEventListener("click", () => selectLocation(Number(button.dataset.locationCard), true));
+  });
 }
 
-function selectOriginalLocation(id, shouldZoom = true) {
-  const location = originalLocations.find((item) => item.id === id);
-  if (!location) return;
-  renderPreview(location);
+function renderRightPanel() {
+  $("#spotName").textContent = activeSpot.name;
+  $("#spotSummary").textContent = activeSpot.summary;
+  $("#spotNote").textContent = activeSpot.notes[0] || "Review this area before visiting.";
+  $("#infoIcon").textContent = accessIcon(activeSpot.label);
 
-  if (accessMap && shouldZoom) {
-    accessMap.setView(location.coordinates, location.id === "cologne-cathedral" ? 15 : 16);
+  $("#accessOverview").innerHTML = `
+    <h3>Access summary</h3>
+    <div class="access-chip-grid">
+      ${Object.entries(activeLocation.features).map(([category, item]) => `
+        <div class="access-chip">
+          <span>${accessIcon(category)}</span>
+          <div><strong>${category}</strong><small>${item.title}</small></div>
+          <em>${item.status}</em>
+        </div>
+      `).join("")}
+    </div>
+  `;
+
+  $("#placeDetails").innerHTML = renderPlaceDetails(getPlaceDetails(activeLocation));
+
+  $("#featureList").innerHTML = activeSpot.categories.map((category) => {
+    const item = activeLocation.features[category];
+    if (!item) return "";
+    return `
+      <article class="feature">
+        <div class="feature-head">
+          <h3>${category}</h3>
+          <span>${item.status}</span>
+        </div>
+        <p><strong>${item.title}</strong></p>
+        <p>${item.detail}</p>
+      </article>
+    `;
+  }).join("");
+
+  $("#communityFeedback").classList.remove("disabled");
+}
+
+function getReviews(locationId) {
+  return [...(communityReviews[locationId] || []), ...(starterReviews[locationId] || [])];
+}
+
+function renderReviews() {
+  const reviews = getReviews(activeLocation.id);
+  $("#reviewCount").textContent = `${reviews.length}`;
+  const summary = reviews.length
+    ? ""
+    : `<article class="review-card"><p>Share your experience to help others understand current accessibility conditions before they visit.</p></article>`;
+  $("#reviewList").innerHTML = reviews.slice(0, 5).map((item) => `
+    <article class="review-card ${item.barrier ? "barrier" : ""}">
+      <div class="review-meta">
+        <strong>👤 ${item.name}</strong>
+        <span>${starText(item.rating)}</span>
+      </div>
+      <time>${item.date}</time>
+      <p>${item.comment}</p>
+      <div class="review-tags">
+        ${item.barrier ? `<em>Temporary barrier</em>` : ""}
+        ${item.photo ? `<em>Photo</em>` : ""}
+      </div>
+      ${item.photo ? `<img src="${item.photo}" alt="Uploaded accessibility review photo" />` : ""}
+    </article>
+  `).join("") || summary;
+}
+
+function starText(rating) {
+  const filled = "★★★★★".slice(0, rating);
+  const empty = "☆☆☆☆☆".slice(0, 5 - rating);
+  return `${filled}${empty}`;
+}
+
+function loadCommunityReviews() {
+  try {
+    return JSON.parse(localStorage.getItem(reviewStorageKey) || "{}");
+  } catch (error) {
+    return {};
   }
 }
 
-function initAccessMap() {
-  if (!window.L || accessMap) return;
-
-  accessMap = L.map("accessMap", {
-    scrollWheelZoom: false
-  }).setView([43.519, -79.611], 14);
-
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(accessMap);
-
-  const icon = L.divIcon({
-    className: "access-marker",
-    html: '<span aria-hidden="true"></span>',
-    iconSize: [24, 24],
-    iconAnchor: [12, 12]
-  });
-
-  accessMarkers = originalLocations.map((location) => {
-    const marker = L.marker(location.coordinates, { icon }).addTo(accessMap);
-    marker.bindPopup(`
-      <strong>${location.title}</strong><br>
-      ${location.category}<br>
-      <a href="${streetMapUrl(location)}" target="_blank" rel="noreferrer">Street Map</a>
-      &nbsp;|&nbsp;
-      <a href="${directionsUrl(location)}" target="_blank" rel="noreferrer">Directions</a>
-    `);
-    marker.on("click", () => selectOriginalLocation(location.id, false));
-    return marker;
-  });
-
-  const bounds = L.latLngBounds(originalLocations.map((location) => location.coordinates));
-  accessMap.fitBounds(bounds, { padding: [32, 32] });
+function saveCommunityReviews() {
+  localStorage.setItem(reviewStorageKey, JSON.stringify(communityReviews));
 }
 
-function renderDetail(scene) {
-  state.selectedId = scene.id;
-  sceneDetail.innerHTML = `
-    <p class="eyebrow">Selected place</p>
-    <div class="detail-layout">
-      <div>
-        <div class="selected-place-photo scene-photo" style="background-position: ${scene.visualPosition};"></div>
-        <h2>${scene.title}</h2>
-        <p>${scene.summary}</p>
-        <div class="match-score" aria-label="${accessMatchLabel(scene.score)}">
-          <span>${accessMatchLabel(scene.score)}</span>
-        </div>
-        <h3>Access features</h3>
-        <div class="tag-list">${scene.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>
-        <h3>Recommended route</h3>
-        <p>${scene.route}</p>
-        <h3>Risk points to check</h3>
-        <ul class="detail-list">${scene.risks.map((risk) => `<li>${risk}</li>`).join("")}</ul>
-        <div class="detail-actions">
-          <button class="control-button" data-speak-target="#sceneDetail" type="button">Read Scene</button>
-          <button class="control-button secondary" data-add="${scene.id}" type="button">Add to Plan</button>
-          <a class="text-button" href="#scenes">Back to Places</a>
-        </div>
-      </div>
-      <div>
-        <h3>Before-you-go checklist</h3>
-        <div class="checklist">
-          ${scene.checklist.map((item, index) => `
-            <label>
-              <input type="checkbox" data-check="${scene.id}-${index}" />
-              <span>${item}</span>
-            </label>
-          `).join("")}
-        </div>
-      </div>
-    </div>
-  `;
-  renderScenes();
+function loadSuggestedPlaces() {
+  try {
+    return JSON.parse(localStorage.getItem(suggestedPlaceStorageKey) || "[]");
+  } catch (error) {
+    return [];
+  }
 }
 
-function renderPlan() {
-  if (state.plan.length === 0) {
-    planList.innerHTML = "<li>No places added yet.</li>";
-    planCount.textContent = "Plan: 0 stops";
-    planTotal.textContent = "0";
+function saveSuggestedPlaces() {
+  localStorage.setItem(suggestedPlaceStorageKey, JSON.stringify(suggestedPlaces));
+}
+
+function handlePhotoUpload(event) {
+  const file = event.target.files?.[0];
+  pendingPhoto = "";
+  $("#photoPreview").innerHTML = "";
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    pendingPhoto = String(reader.result || "");
+    $("#photoPreview").innerHTML = `<img src="${pendingPhoto}" alt="Selected accessibility feedback photo preview" />`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function submitReview(event) {
+  event.preventDefault();
+  const comment = $("#reviewComment").value.trim();
+  const rating = Number($("#reviewRating").value);
+  if (!comment) {
+    $("#speechStatus").textContent = "Add note.";
     return;
   }
-  planList.innerHTML = state.plan.map((id) => {
-    const scene = [...scenes, ...originalLocations].find((item) => item.id === id);
-    return `<li><strong>${scene.title}:</strong> ${scene.route}</li>`;
-  }).join("");
-  planCount.textContent = `Plan: ${state.plan.length} stop${state.plan.length === 1 ? "" : "s"}`;
-  planTotal.textContent = String(state.plan.length);
-}
-
-function addToPlan(id) {
-  const scene = [...scenes, ...originalLocations].find((item) => item.id === id);
-  if (!state.plan.includes(id)) {
-    state.plan.push(id);
-    showToast(`${scene.title} has been added. View it in My Plan.`);
-  } else {
-    showToast(`${scene.title} is already in My Plan.`);
+  if (!rating) {
+    $("#speechStatus").textContent = "Add rating.";
+    return;
   }
-  renderPlan();
+
+  const item = review(
+    $("#reviewName").value.trim() || "Community member",
+    rating,
+    comment,
+    $("#reviewBarrier").checked,
+    $("#reviewDate").value || new Date().toISOString().slice(0, 10),
+    pendingPhoto
+  );
+
+  communityReviews[activeLocation.id] = [item, ...(communityReviews[activeLocation.id] || [])];
+  saveCommunityReviews();
+  $("#feedbackForm").reset();
+  pendingPhoto = "";
+  $("#photoPreview").innerHTML = "";
+  $("#speechStatus").textContent = "Posted.";
+  renderReviews();
 }
 
-function showToast(message) {
-  toast.textContent = message;
-  toast.classList.add("is-visible");
-  window.clearTimeout(showToast.timeoutId);
-  showToast.timeoutId = window.setTimeout(() => {
-    toast.classList.remove("is-visible");
-  }, 3600);
+function handleSuggestedPhotoUpload(event) {
+  const file = event.target.files?.[0];
+  pendingSuggestedPhoto = "";
+  $("#suggestPhotoPreview").innerHTML = "";
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    pendingSuggestedPhoto = String(reader.result || "");
+    $("#suggestPhotoPreview").innerHTML = `<img src="${pendingSuggestedPhoto}" alt="Selected suggested place photo preview" />`;
+  };
+  reader.readAsDataURL(file);
 }
 
-function updatePlannerSummary() {
-  const walking = Number(document.querySelector("#walkingRange").value);
-  const noise = Number(document.querySelector("#noiseRange").value);
-  const walkingText = walking <= 2 ? "short walking distance" : walking >= 4 ? "longer walking is acceptable" : "moderate walking";
-  const noiseText = noise <= 2 ? "quiet spaces preferred" : noise >= 4 ? "busy sound levels are acceptable" : "moderate noise";
-  plannerSummary.textContent = `Recommended profile: ${modeCopy[state.mode].label}, ${walkingText}, ${noiseText}.`;
+function submitSuggestedPlace(event) {
+  event.preventDefault();
+  const name = $("#suggestName").value.trim();
+  if (!name) {
+    $("#suggestStatus").textContent = "Place name is required.";
+    return;
+  }
+
+  const place = {
+    id: `suggested-${Date.now()}`,
+    name,
+    address: $("#suggestAddress").value.trim(),
+    category: $("#suggestCategory").value,
+    features: $("#suggestFeatures").value.trim(),
+    concerns: $("#suggestConcerns").value.trim(),
+    tour: $("#suggestTour").value.trim(),
+    photo: pendingSuggestedPhoto,
+    date: new Date().toISOString().slice(0, 10),
+    status: "Pending Review"
+  };
+
+  suggestedPlaces = [place, ...suggestedPlaces];
+  saveSuggestedPlaces();
+  $("#suggestPlaceForm").reset();
+  pendingSuggestedPhoto = "";
+  $("#suggestPhotoPreview").innerHTML = "";
+  $("#suggestStatus").textContent = "Submitted for review.";
+  renderSuggestedPlaces();
 }
 
-function updatePriorityFeedback() {
-  const suggestedCount = filteredScenes().length;
-  const confirmedCount = state.mode === "all"
-    ? originalLocations.length
-    : originalLocations.filter((location) => location.mode.includes(state.mode)).length;
-  priorityFeedback.textContent = `${modeCopy[state.mode].guidance} ${confirmedCount} confirmed 360° place${confirmedCount === 1 ? "" : "s"} and ${suggestedCount} future place template${suggestedCount === 1 ? "" : "s"} match this choice.`;
+function renderSuggestedPlaces() {
+  $("#suggestionCount").textContent = `${suggestedPlaces.length}`;
+  if (!suggestedPlaces.length) {
+    $("#suggestionList").innerHTML = `<article class="suggestion-card"><p>No community suggestions yet.</p></article>`;
+    return;
+  }
+
+  $("#suggestionList").innerHTML = suggestedPlaces.slice(0, 5).map((place) => `
+    <article class="suggestion-card">
+      <div class="review-meta">
+        <strong>${place.name}</strong>
+        <em>${place.status}</em>
+      </div>
+      <time>${place.date}</time>
+      <p>${place.address || place.category}</p>
+      ${place.features ? `<p><strong>Features:</strong> ${place.features}</p>` : ""}
+      ${place.concerns ? `<p><strong>Concerns:</strong> ${place.concerns}</p>` : ""}
+      ${place.photo ? `<img src="${place.photo}" alt="Suggested place accessibility photo" />` : ""}
+    </article>
+  `).join("");
 }
 
-function collectText(target) {
-  const element = typeof target === "string" ? document.querySelector(target) : target;
-  return element ? element.innerText.replace(/\s+/g, " ").trim() : "";
+function renderPlaceDetails(groups) {
+  return `
+    <h3>Place details</h3>
+    <div class="detail-groups">
+      ${Object.entries(groups).map(([groupName, items], index) => `
+        <details class="detail-group" ${index === 0 ? "open" : ""}>
+          <summary>${groupName}<span>${items.length}</span></summary>
+          <div class="detail-items">
+            ${items.map((item) => `<p><span aria-hidden="true">✓</span>${item}</p>`).join("")}
+          </div>
+        </details>
+      `).join("")}
+    </div>
+  `;
+}
+
+function getPlaceDetails(location) {
+  const baseAccessibility = [
+    ...Object.entries(location.features).map(([category, item]) => `${category}: ${item.title}`)
+  ];
+  const key = `${location.type} ${location.name}`.toLowerCase();
+
+  if (key.includes("restaurant") || key.includes("patio")) {
+    return {
+      Accessibility: baseAccessibility,
+      "Service options": ["Outdoor seating", "Dine-in", "Takeout availability should be checked"],
+      "Dining options": ["Lunch", "Dinner", "Seating"],
+      Amenities: ["Washroom access should be confirmed", "Nearby parking"],
+      Atmosphere: ["Casual", "Social", "Noise level varies by time"]
+    };
+  }
+
+  if (key.includes("park") || key.includes("waterfront")) {
+    return {
+      Accessibility: baseAccessibility,
+      "Outdoor features": ["Waterfront route", "Rest areas", "Open public space"],
+      Amenities: ["Public washroom", "Benches", "Parking"],
+      "Good for": ["Short walks", "Rest breaks", "Caregiver-supported visits"],
+      Planning: ["Check weather", "Confirm washroom availability"]
+    };
+  }
+
+  if (key.includes("district") || key.includes("port credit")) {
+    return {
+      Accessibility: baseAccessibility,
+      "Getting there": ["Transit access", "Parking options", "Sidewalk routes"],
+      Amenities: ["Public seating", "Waterfront walkway", "Nearby services"],
+      Atmosphere: ["Busy at event times", "Outdoor public area"],
+      Planning: ["Choose quieter visiting hours"]
+    };
+  }
+
+  if (key.includes("museum") || key.includes("historic")) {
+    return {
+      Accessibility: baseAccessibility,
+      Amenities: ["Accessible washroom", "Free parking", "Outdoor property access"],
+      Planning: ["Some historic buildings may have stair access only", "Confirm ramp and route before arrival"],
+      Atmosphere: ["Calmer cultural site", "Slower visit pace"]
+    };
+  }
+
+  if (key.includes("study") || key.includes("campus")) {
+    return {
+      Accessibility: baseAccessibility,
+      Amenities: ["Computer station", "Movable small table", "Accessible study desk"],
+      "Lighting / Quietness": ["Quiet study environment", "Light-control curtains", "Reduced glare"],
+      Planning: ["Confirm room availability", "Check nearest accessible washroom"]
+    };
+  }
+
+  return { Accessibility: baseAccessibility };
+}
+
+function accessIcon(category) {
+  const key = category.toLowerCase();
+  if (key.includes("entrance")) return "↳";
+  if (key.includes("path")) return "→";
+  if (key.includes("seat")) return "▣";
+  if (key.includes("wash")) return "WC";
+  if (key.includes("park")) return "P";
+  if (key.includes("light") || key.includes("quiet")) return "◐";
+  if (key.includes("desk")) return "□";
+  return "i";
+}
+
+function mapIcon(type) {
+  const key = type.toLowerCase();
+  if (key.includes("park") || key.includes("waterfront")) return "⌁";
+  if (key.includes("restaurant") || key.includes("patio")) return "☕";
+  if (key.includes("district")) return "⌖";
+  if (key.includes("museum") || key.includes("historic")) return "◇";
+  if (key.includes("study") || key.includes("campus")) return "□";
+  return "●";
+}
+
+function readCurrentView() {
+  stopSpeech();
+  const synth = window.speechSynthesis;
+  if (!synth) {
+    $("#speechStatus").textContent = "No speech.";
+    return;
+  }
+  const text = `${activeLocation.name}. ${activeLocation.description}. Selected spot: ${activeSpot.name}. ${activeSpot.summary}. Accessible path: ${activeLocation.path}`;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = 0.88;
+  utterance.pitch = 1;
+  utterance.onend = () => {
+    speaking = false;
+    $("#speechStatus").textContent = "Done.";
+  };
+  speaking = true;
+  $("#speechStatus").textContent = "Reading.";
+  synth.speak(utterance);
 }
 
 function stopSpeech() {
-  speechStopped = true;
-  speechChunks = [];
-  speechIndex = 0;
-  activeUtterance = null;
-  if ("speechSynthesis" in window) {
+  if (window.speechSynthesis) {
     window.speechSynthesis.cancel();
-    window.speechSynthesis.pause();
-    window.setTimeout(() => window.speechSynthesis.cancel(), 60);
-    window.setTimeout(() => window.speechSynthesis.cancel(), 180);
   }
-  speechStatus.textContent = "Speech stopped.";
+  if (speaking) {
+    speaking = false;
+    $("#speechStatus").textContent = "Stopped.";
+  }
 }
 
-function getPreferredVoice() {
-  const voices = window.speechSynthesis.getVoices();
-  return voices.find((voice) => /Samantha|Ava|Jenny|Natural|Google US English|Microsoft Aria/i.test(voice.name))
-    || voices.find((voice) => voice.lang.startsWith("en"))
-    || null;
-}
-
-function splitSpeech(text) {
-  const sentences = text
-    .replace(/\s+/g, " ")
-    .split(/(?<=[.!?])\s+/)
-    .filter(Boolean);
-  const chunks = [];
-  let current = "";
-
-  sentences.forEach((sentence) => {
-    if ((current + " " + sentence).trim().length > 230) {
-      if (current) chunks.push(current);
-      current = sentence;
-    } else {
-      current = `${current} ${sentence}`.trim();
-    }
-  });
-
-  if (current) chunks.push(current);
-  return chunks.length ? chunks : [text];
-}
-
-function speakNextChunk() {
-  if (speechStopped || speechIndex >= speechChunks.length) {
-    activeUtterance = null;
-    return;
-  }
-
-  const utterance = new SpeechSynthesisUtterance(speechChunks[speechIndex]);
-  const preferredVoice = getPreferredVoice();
-  if (preferredVoice) utterance.voice = preferredVoice;
-  utterance.rate = 0.78;
-  utterance.pitch = 0.96;
-  utterance.volume = 1;
-  utterance.lang = preferredVoice?.lang || "en-US";
-  activeUtterance = utterance;
-  utterance.onend = () => {
-    speechIndex += 1;
-    window.setTimeout(speakNextChunk, 90);
-  };
-  utterance.onerror = () => {
-    speechStopped = true;
-    activeUtterance = null;
-  };
-  window.speechSynthesis.speak(utterance);
-}
-
-function speakText(text) {
-  if (!("speechSynthesis" in window)) {
-    speechStatus.textContent = "Speech is not available in this browser. Please open the site in Chrome, Safari, or Edge to use read-aloud.";
-    showToast("Speech is not available in this browser.");
-    return;
-  }
-  stopSpeech();
-  if (!text) return;
-  speechStopped = false;
-  speechChunks = splitSpeech(text);
-  speechIndex = 0;
-  window.speechSynthesis.resume();
-  speechStatus.textContent = "Reading aloud. Use Stop Reading to stop.";
-  speakNextChunk();
-}
-
-document.addEventListener("click", (event) => {
-  const target = event.target.closest("button, a");
-  const sceneCard = event.target.closest(".scene-card");
-  if (!target && !sceneCard) return;
-
-  const openId = target?.dataset.open || (!target && sceneCard?.dataset.scene);
-  const addId = target?.dataset.add;
-  const speakSceneId = target?.dataset.speakScene;
-  const originalId = target?.dataset.original;
-  const speakOriginalId = target?.dataset.speakOriginal;
-  const speakTarget = target?.dataset.speakTarget;
-  const category = target?.dataset.category;
-  const font = target?.dataset.font;
-
-  if (openId) {
-    renderDetail(scenes.find((scene) => scene.id === openId));
-    document.querySelector("#sceneDetail").scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  if (addId) {
-    addToPlan(addId);
-  }
-
-  if (originalId) {
-    selectOriginalLocation(originalId);
-    document.querySelector("#previewPanel").scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  if (speakSceneId) {
-    const scene = scenes.find((item) => item.id === speakSceneId);
-    speakText(`${scene.title}. ${scene.summary} Recommended route. ${scene.route} Risk points. ${scene.risks.join(". ")}`);
-  }
-
-  if (speakOriginalId) {
-    const location = originalLocations.find((item) => item.id === speakOriginalId);
-    speakText(`${location.title}. ${location.summary} Visit guidance. ${location.route} Accessibility hotspots. ${location.hotspots.join(". ")} Notes. ${location.notes}`);
-  }
-
-  if (speakTarget) {
-    speakText(collectText(speakTarget));
-  }
-
-  if (target.id === "readPageButton") {
-    speakText(collectText("main"));
-  }
-
-  if (target.id === "stopSpeechButton") {
-    stopSpeech();
-  }
-
-  if (target.id === "contrastButton") {
-    document.body.classList.toggle("high-contrast");
-    target.setAttribute("aria-pressed", String(document.body.classList.contains("high-contrast")));
-  }
-
-  if (category) {
-    state.category = category;
-    document.querySelectorAll("[data-category]").forEach((button) => {
-      button.classList.toggle("is-active", button.dataset.category === category);
-    });
-    renderScenes();
-    updatePriorityFeedback();
-  }
-
-  if (font) {
-    const sizes = { base: "1", large: "1.18", xlarge: "1.35" };
-    document.documentElement.style.setProperty("--font-scale", sizes[font]);
-    document.querySelectorAll("[data-font]").forEach((button) => {
-      button.setAttribute("aria-pressed", String(button.dataset.font === font));
-    });
-  }
-});
-
-document.addEventListener("keydown", (event) => {
-  const sceneCard = event.target.closest?.(".scene-card");
-  if (!sceneCard) return;
-  if (event.key !== "Enter" && event.key !== " ") return;
-
-  event.preventDefault();
-  renderDetail(scenes.find((scene) => scene.id === sceneCard.dataset.scene));
-  document.querySelector("#sceneDetail").scrollIntoView({ behavior: "smooth", block: "start" });
-});
-
-document.querySelectorAll('input[name="mode"]').forEach((input) => {
-  input.addEventListener("change", (event) => {
-    state.mode = event.target.value;
-    renderScenes();
-    renderOriginalLocations();
-    updatePlannerSummary();
-    updatePriorityFeedback();
-  });
-});
-
-document.querySelector("#sceneSearch").addEventListener("input", (event) => {
-  state.query = event.target.value;
-  renderScenes();
-  updatePriorityFeedback();
-});
-
-document.querySelectorAll('input[type="range"]').forEach((input) => {
-  input.addEventListener("input", updatePlannerSummary);
-});
-
-renderScenes();
-renderDetail(scenes[0]);
-renderOriginalLocations();
-renderPreview(originalLocations[0]);
-initAccessMap();
-updatePlannerSummary();
-updatePriorityFeedback();
-document.querySelector('[data-category="all"]').classList.add("is-active");
-document.querySelector('[data-font="base"]').setAttribute("aria-pressed", "true");
+init();

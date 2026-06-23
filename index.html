@@ -3,204 +3,274 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Access Journey</title>
+    <title>AccessMap Journey</title>
     <link rel="stylesheet" href="./vendor/leaflet/leaflet.css" />
-    <link rel="stylesheet" href="./styles.css?v=13" />
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <header class="app-header">
-      <a class="brand" href="#top" aria-label="Access Journey home">
-        <span class="brand-mark" aria-hidden="true">AJ</span>
-        <span>Access Journey</span>
-      </a>
-      <nav aria-label="Main navigation">
-        <a href="#map360">Map & 360</a>
-        <a href="#scenes">Places</a>
-        <a href="#planner">Needs & Plan</a>
-      </nav>
-    </header>
+    <div class="app-shell">
+      <aside class="left-rail" aria-label="Main navigation and accessibility controls">
+        <a class="brand" href="#top" aria-label="AccessMap Journey home">
+          <span class="brand-mark" aria-hidden="true">AJ</span>
+          <span>
+            <strong>AccessMap Journey</strong>
+            <small>Know Before You Go</small>
+          </span>
+        </a>
 
-    <main id="top">
-      <section class="assist-bar" aria-label="Accessibility controls">
-        <div>
-          <p class="eyebrow">Accessibility controls</p>
-          <h1>Plan visits with sound, scale, and confidence.</h1>
-        </div>
-        <div class="assist-actions">
-          <button class="control-button" id="readPageButton" type="button">Read Page</button>
-          <button class="control-button secondary" id="stopSpeechButton" type="button">Stop Reading</button>
-          <div class="font-controls" aria-label="Font size controls">
-            <button class="font-button" data-font="base" type="button">A</button>
-            <button class="font-button" data-font="large" type="button">A+</button>
-            <button class="font-button" data-font="xlarge" type="button">A++</button>
+        <nav class="main-nav" aria-label="Page sections">
+          <button class="nav-item active" type="button" data-view="overview" aria-label="Overview" data-label="Overview">
+            <span aria-hidden="true" class="icon-home"></span>
+          </button>
+          <button class="nav-item" type="button" data-view="map" aria-label="Street Map" data-label="Map">
+            <span aria-hidden="true" class="icon-map"></span>
+          </button>
+          <button class="nav-item" type="button" data-view="tour" aria-label="360 Preview" data-label="360">
+            <span aria-hidden="true" class="icon-view"></span>
+          </button>
+          <button class="nav-item" type="button" data-view="access" aria-label="Accessibility Info" data-label="Access">
+            <span aria-hidden="true" class="icon-access"></span>
+          </button>
+        </nav>
+
+        <section class="tool-panel" aria-label="Accessibility display tools">
+          <div class="tool-grid">
+            <button class="tool-button" type="button" data-font="normal" aria-label="Normal text size">A</button>
+            <button class="tool-button" type="button" data-font="large" aria-label="Large text size">A+</button>
+            <button class="tool-button" type="button" data-font="xlarge" aria-label="Extra large text size">A++</button>
+            <button class="tool-button" type="button" id="contrastButton" aria-label="Toggle high contrast">◐</button>
           </div>
-          <button class="control-button secondary" id="contrastButton" type="button">High Contrast</button>
-          <a class="control-button secondary plan-jump" href="#myPlan"><span id="planCount">Plan: 0 stops</span></a>
-        </div>
-        <p class="speech-status" id="speechStatus" role="status" aria-live="polite">Speech is ready.</p>
-      </section>
-
-      <section class="hero" data-readable>
-        <div class="hero-copy">
-          <p class="eyebrow">Accessible public-space preview</p>
-          <h2>Know the space before the visit starts.</h2>
-          <p>
-            Access Journey helps disabled visitors and companions understand a place before
-            arriving. Each scene combines plain-language guidance, spoken support, risk points,
-            and a personal visit plan.
-          </p>
-          <div class="hero-actions">
-            <a class="primary-link" href="#planner">Start Planning</a>
-            <button class="text-button" data-speak-target=".hero" type="button">Listen</button>
+          <div class="speech-row">
+            <button class="tool-button primary" type="button" id="readButton" aria-label="Read page aloud">▶</button>
+            <button class="tool-button" type="button" id="stopButton" aria-label="Stop reading">■</button>
           </div>
-        </div>
-      </section>
+          <p class="status" id="speechStatus" role="status" aria-live="polite">Ready</p>
+        </section>
 
-      <section class="journey-flow" aria-label="Visit planning steps" data-readable>
-        <article>
-          <span>1</span>
-          <h3>Choose needs</h3>
-          <p>Set the visitor priority so the page can highlight suitable places.</p>
-        </article>
-        <article>
-          <span>2</span>
-          <h3>Preview confirmed places</h3>
-          <p>Use the map and 360° views for locations that already have immersive tours.</p>
-        </article>
-        <article>
-          <span>3</span>
-          <h3>Prepare next places</h3>
-          <p>Pick future location types, then add real addresses and 360° links later.</p>
-        </article>
-      </section>
-
-      <section class="panel needs-panel" id="planner" aria-labelledby="planner-title" data-readable>
-        <div class="section-heading">
-          <p class="eyebrow">Step 1</p>
-          <h2 id="planner-title">Choose visitor needs.</h2>
-          <p>
-            This choice changes the recommended places below. Select one main priority for the
-            current visit.
-          </p>
-        </div>
-        <div class="planner-grid">
-          <fieldset class="choice-panel">
-            <legend>Visitor priority</legend>
-            <label><input type="radio" name="mode" value="all" checked /> <span>All access needs</span></label>
-            <label><input type="radio" name="mode" value="wheelchair" /> <span>Wheelchair access</span></label>
-            <label><input type="radio" name="mode" value="lowvision" /> <span>Low vision support</span></label>
-            <label><input type="radio" name="mode" value="sensory" /> <span>Sensory comfort</span></label>
-            <label><input type="radio" name="mode" value="mobility" /> <span>Rest and mobility support</span></label>
-            <p id="priorityFeedback" class="priority-feedback">Showing places for all access needs.</p>
-          </fieldset>
-
-          <div class="range-panel">
-            <label for="walkingRange">Walking tolerance</label>
-            <input id="walkingRange" type="range" min="1" max="5" value="3" />
-            <label for="noiseRange">Noise tolerance</label>
-            <input id="noiseRange" type="range" min="1" max="5" value="3" />
-            <p id="plannerSummary" class="summary-text">Balanced route: moderate walking, moderate noise.</p>
+        <section class="comfort-card" aria-label="Current comfort level">
+          <strong id="railComfort">High</strong>
+          <div class="comfort-dots" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span class="muted"></span>
           </div>
+        </section>
+      </aside>
 
-        </div>
-      </section>
-
-      <section class="my-plan-section" id="myPlan" aria-labelledby="my-plan-title" data-readable>
-        <div class="section-heading">
-          <p class="eyebrow">My Plan</p>
-          <h2 id="my-plan-title">Saved visit summary.</h2>
-          <p>
-            Places you add from the map or place cards appear here. Review this summary before
-            leaving, or listen to it as a spoken checklist.
-          </p>
-        </div>
-        <div class="my-plan-layout">
-          <div class="plan-stat">
-            <span id="planTotal">0</span>
-            <p>saved stops</p>
-          </div>
-          <div class="visit-plan" id="savedPlan" aria-live="polite">
-            <h3>Saved Places</h3>
-            <ul id="visitPlanList">
-              <li>No places added yet.</li>
-            </ul>
-            <div class="detail-actions">
-              <button class="control-button" data-speak-target=".visit-plan" type="button">Read Plan</button>
-              <a class="text-button" href="#map360">Add from Map</a>
-              <a class="text-button" href="#scenes">Add Future Place</a>
+      <main class="main-stage" id="top">
+        <header class="stage-header">
+          <div class="place-search">
+            <div class="search-row">
+              <input id="locationSearch" type="search" placeholder="Search any place, address, entrance, parking, quiet..." autocomplete="off" />
+              <select id="locationSelect" aria-label="Choose location"></select>
             </div>
+            <div class="search-results" id="searchResults" aria-live="polite"></div>
           </div>
-        </div>
-      </section>
+          <div class="quick-actions">
+            <button class="pill-button" type="button" id="shareButton">Share</button>
+            <button class="pill-button" type="button" id="saveButton">Save</button>
+          </div>
+        </header>
 
-      <section class="map360-section" id="map360" aria-labelledby="map360-title" data-readable>
-        <div class="section-heading">
-          <p class="eyebrow">Step 2</p>
-          <h2 id="map360-title">Preview confirmed 360° places.</h2>
-          <p>
-            These locations already have map points and immersive previews. Use them when the user
-            needs to understand the space before visiting.
-          </p>
-        </div>
-        <div class="map360-layout">
-          <aside class="original-location-list" aria-label="360 location list">
-            <h3>Available 360° Locations</h3>
-            <div id="originalLocationList"></div>
-          </aside>
-          <div class="map-panel" aria-labelledby="street-map-title">
-            <div class="map-panel-header">
-              <div>
-                <p class="eyebrow">Street Map</p>
-                <h3 id="street-map-title">Street map location preview</h3>
+        <section class="viewer-card" aria-label="Map and 360 preview">
+          <div class="location-card" id="overviewPanel" aria-labelledby="homeTitle">
+            <div>
+              <p class="eyebrow">Accessible place preview</p>
+              <h1 id="homeTitle">Know Before You Go</h1>
+            </div>
+            <p>Search the map, open a 360° preview when available, and check key access details before visiting.</p>
+          </div>
+          <div class="viewer-tabs" role="tablist" aria-label="Preview mode">
+            <button class="tab-button active" type="button" data-panel="mapPanel">Street Map</button>
+            <button class="tab-button" type="button" data-panel="tourPanel">360° View</button>
+          </div>
+          <div class="viewer-surface">
+            <div class="viewer-panel active" id="mapPanel">
+              <div id="streetMap" role="img" aria-label="Street map showing selected and searched locations"></div>
+              <div id="mapFallback" class="map-fallback" aria-label="Fallback map showing prepared example locations"></div>
+            </div>
+            <div class="viewer-panel" id="tourPanel">
+              <div id="tourWrap"></div>
+            </div>
+            <div class="map-caption" id="mapCaption"></div>
+          </div>
+        </section>
+
+        <section class="bottom-dock" aria-label="Explore selected location by spot">
+          <div class="dock-heading">
+            <div>
+              <p class="eyebrow">Prepared places</p>
+              <h2>Select a place to preview.</h2>
+            </div>
+            <button class="text-action" type="button" id="directionsButton">Open directions</button>
+          </div>
+          <div class="spot-strip" id="spotStrip"></div>
+        </section>
+
+        <section class="path-card" aria-label="Accessible path overview">
+          <div>
+            <p class="eyebrow">Accessible path</p>
+            <h2 id="pathTitle">Recommended route</h2>
+            <p id="pathSummary"></p>
+          </div>
+          <ol class="path-steps" id="pathSteps"></ol>
+        </section>
+
+        <section class="warm-visual" aria-label="Warm preview image">
+          <img src="./assets/access-journey-hero.png" alt="People moving through a welcoming accessible public space" />
+          <div>
+            <p class="eyebrow">Warm, clear, respectful</p>
+            <h2>Map, preview, and access details stay connected.</h2>
+            <p class="warm-copy">Built for older adults, disabled visitors, caregivers, and anyone who wants to plan with less uncertainty.</p>
+          </div>
+        </section>
+      </main>
+
+      <aside class="right-panel" aria-label="Selected accessibility information">
+        <button class="close-info" type="button" aria-label="Close information panel">×</button>
+        <div class="info-icon" aria-hidden="true" id="infoIcon">↗</div>
+        <p class="eyebrow" id="locationType">Waterfront park</p>
+        <h2 id="locationName">Jack Darling Memorial Park</h2>
+        <div class="level-pill" id="levelPill">Strong access</div>
+        <p class="location-copy" id="locationDescription"></p>
+
+        <section class="selected-spot">
+          <h3 id="spotName">Waterfront trail</h3>
+          <p id="spotSummary"></p>
+        </section>
+
+        <section class="access-overview" id="accessOverview" aria-label="Accessibility categories overview"></section>
+
+        <section class="place-details" id="placeDetails" aria-label="Place details"></section>
+
+        <section class="community-feedback" id="communityFeedback" aria-label="Community accessibility feedback">
+          <div class="feedback-head">
+            <div>
+              <p class="eyebrow">Community feedback</p>
+              <h3>Accessibility confidence</h3>
+            </div>
+            <span id="reviewCount">0</span>
+          </div>
+
+          <details class="feedback-compose">
+            <summary>Share experience</summary>
+            <form class="feedback-form" id="feedbackForm">
+              <div class="form-row">
+                <label>
+                  Name
+                  <input id="reviewName" type="text" placeholder="Your name" maxlength="32" />
+                </label>
+                <label>
+                  Rating
+                  <select id="reviewRating">
+                    <option value="">Select</option>
+                    <option value="5">5 stars</option>
+                    <option value="4">4 stars</option>
+                    <option value="3">3 stars</option>
+                    <option value="2">2 stars</option>
+                    <option value="1">1 star</option>
+                  </select>
+                </label>
               </div>
-              <p>Use the map to check the surrounding streets before opening the 360° view.</p>
+
+              <label>
+                Visit date
+                <input id="reviewDate" type="date" />
+              </label>
+
+              <label>
+                Notes
+                <textarea id="reviewComment" rows="3" maxlength="180" placeholder="Accessible parking was easy to locate."></textarea>
+              </label>
+
+              <div class="feedback-options">
+                <label class="barrier-check">
+                  <input id="reviewBarrier" type="checkbox" />
+                  Temporary barrier
+                </label>
+                <label class="upload-button">
+                  Upload photo
+                  <input id="reviewPhoto" type="file" accept="image/*" />
+                </label>
+              </div>
+
+              <div class="photo-preview" id="photoPreview" aria-live="polite"></div>
+              <button class="submit-review" type="submit">Post</button>
+            </form>
+          </details>
+
+          <div class="review-list" id="reviewList" aria-live="polite"></div>
+        </section>
+
+        <section class="suggest-place" id="suggestPlace" aria-label="Suggest a new accessibility place">
+          <div class="feedback-head">
+            <div>
+              <p class="eyebrow">Community suggested places</p>
+              <h3>Suggest a new place</h3>
             </div>
-            <div id="accessMap" role="img" aria-label="Map showing original accessibility scene locations"></div>
+            <span id="suggestionCount">0</span>
           </div>
-          <article class="preview-panel" id="previewPanel" aria-live="polite">
-            <h3>Select a location</h3>
-            <p>Choose one of the original scenes to load its accessibility notes and 360° preview.</p>
-          </article>
-        </div>
-      </section>
+          <p class="helper-copy">Suggest a public place that may be helpful for future accessibility mapping.</p>
 
-      <section class="scene-section" id="scenes" aria-labelledby="scene-title">
-        <div class="section-heading">
-          <p class="eyebrow">Step 3</p>
-          <h2 id="scene-title">Choose places to prepare next.</h2>
-          <p>
-            These place types are templates for future work. After you confirm a real address and
-            add a 360° tour link, the place can move into the map preview.
-          </p>
-        </div>
-        <div class="toolbar" aria-label="Scene filters">
-          <input id="sceneSearch" type="search" placeholder="Search scenes or access features" aria-label="Search scenes" />
-          <button class="control-button secondary" data-category="all" type="button">All</button>
-          <button class="control-button secondary" data-category="outdoor" type="button">Outdoor</button>
-          <button class="control-button secondary" data-category="indoor" type="button">Indoor</button>
-          <button class="control-button secondary" data-category="service" type="button">Service</button>
-          <button class="control-button secondary" data-category="transit" type="button">Transit</button>
-        </div>
-        <div class="scene-grid" id="sceneGrid" aria-live="polite"></div>
-      </section>
+          <details class="feedback-compose">
+            <summary>Suggest place</summary>
+            <form class="feedback-form" id="suggestPlaceForm">
+              <label>
+                Place Name
+                <input id="suggestName" type="text" placeholder="Place name" maxlength="70" />
+              </label>
+              <label>
+                Address
+                <input id="suggestAddress" type="text" placeholder="Address or area" maxlength="120" />
+              </label>
+              <label>
+                Category
+                <select id="suggestCategory">
+                  <option value="Public place">Public place</option>
+                  <option value="Park / outdoor space">Park / outdoor space</option>
+                  <option value="Restaurant / cafe">Restaurant / cafe</option>
+                  <option value="Transit / station">Transit / station</option>
+                  <option value="Library / study">Library / study</option>
+                  <option value="Museum / culture">Museum / culture</option>
+                </select>
+              </label>
+              <label>
+                Accessibility Features
+                <textarea id="suggestFeatures" rows="2" maxlength="180" placeholder="Ramp, accessible washroom, quiet area..."></textarea>
+              </label>
+              <label>
+                Accessibility Concerns
+                <textarea id="suggestConcerns" rows="2" maxlength="180" placeholder="Construction, narrow entrance, broken elevator..."></textarea>
+              </label>
+              <label>
+                Optional 360 link
+                <input id="suggestTour" type="url" placeholder="https://..." maxlength="180" />
+              </label>
+              <label class="upload-button full">
+                Upload Photo
+                <input id="suggestPhoto" type="file" accept="image/*" />
+              </label>
+              <div class="photo-preview" id="suggestPhotoPreview" aria-live="polite"></div>
+              <button class="submit-review" type="submit">Submit for Review</button>
+            </form>
+          </details>
 
-      <section class="detail-panel" id="sceneDetail" aria-live="polite" data-readable>
-        <p class="eyebrow">Selected scene</p>
-        <h2>Select a scene to view access guidance.</h2>
-        <p>
-          Scene details will show spoken guidance, access highlights, risk points, and a visit
-          checklist.
-        </p>
-      </section>
+          <p class="status" id="suggestStatus" role="status" aria-live="polite"></p>
+          <div class="suggestion-list" id="suggestionList" aria-live="polite"></div>
+        </section>
 
-      <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    </main>
+        <section class="feature-list" id="featureList" aria-label="Accessibility details"></section>
 
-    <footer class="app-footer">
-      <p>Access Journey | Accessible visit planning</p>
-    </footer>
+        <section class="note-box">
+          <p id="spotNote">This area is friendly for wheelchair users and walkers.</p>
+        </section>
 
-    <script src="./vendor/leaflet/leaflet.js?v=13"></script>
-    <script src="./app.js?v=13"></script>
+        <section class="source-box">
+          <p class="eyebrow">Location basis</p>
+          <a id="sourceLink" href="#" target="_blank" rel="noreferrer">Open source</a>
+        </section>
+      </aside>
+    </div>
+
+    <script src="./vendor/leaflet/leaflet.js"></script>
+    <script src="./app.js"></script>
   </body>
 </html>
