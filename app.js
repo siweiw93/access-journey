@@ -157,7 +157,7 @@ let pendingPhoto = "";
 let pendingSuggestedPhoto = "";
 const reviewStorageKey = "accessMapCommunityReviewsV3";
 const suggestedPlaceStorageKey = "accessMapSuggestedPlacesV2";
-const tourProxyBase = "";
+const tourProxyBase = "https://accessmap-tour-proxy.onrender.com";
 let communityReviews = loadCommunityReviews();
 let suggestedPlaces = loadSuggestedPlaces();
 
