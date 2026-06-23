@@ -1,0 +1,3 @@
+name = "accessmap-tour-proxy"
+main = "cloudflare-tour-proxy-worker.js"
+compatibility_date = "2026-06-23"

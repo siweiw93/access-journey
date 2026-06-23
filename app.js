@@ -157,6 +157,7 @@ let pendingPhoto = "";
 let pendingSuggestedPhoto = "";
 const reviewStorageKey = "accessMapCommunityReviewsV3";
 const suggestedPlaceStorageKey = "accessMapSuggestedPlacesV2";
+const tourProxyBase = "";
 let communityReviews = loadCommunityReviews();
 let suggestedPlaces = loadSuggestedPlaces();
 
@@ -610,9 +611,8 @@ function renderAll() {
 }
 
 function renderTour(location) {
-  const securePage = window.location.protocol === "https:";
-  const httpTour = location.tour.startsWith("http://");
-  if (securePage && httpTour) {
+  const embedUrl = getTourEmbedUrl(location.tour);
+  if (!embedUrl) {
     return `
       <div class="tour-fallback">
         <div>
@@ -624,7 +624,19 @@ function renderTour(location) {
       </div>
     `;
   }
-  return `<iframe src="${location.tour}" title="360 preview of ${location.name}" allowfullscreen></iframe>`;
+  return `<iframe src="${embedUrl}" title="360 preview of ${location.name}" allowfullscreen></iframe>`;
+}
+
+function getTourEmbedUrl(tourUrl) {
+  const securePage = window.location.protocol === "https:";
+  const httpTour = tourUrl.startsWith("http://");
+  if (!securePage || !httpTour) return tourUrl;
+
+  const proxyBase = (window.ACCESSMAP_TOUR_PROXY_BASE || tourProxyBase).trim().replace(/\/$/, "");
+  if (!proxyBase) return "";
+
+  const parsed = new URL(tourUrl);
+  return `${proxyBase}${parsed.pathname}${parsed.search}`;
 }
 
 function renderSpots() {
