@@ -25,3 +25,11 @@ Use this command:
 ```sh
 npm start
 ```
+
+Render setup:
+
+```text
+Root Directory: tour-proxy
+Build Command: npm install
+Start Command: npm start
+```

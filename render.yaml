@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: accessmap-tour-proxy
+    runtime: node
+    plan: free
+    rootDir: tour-proxy
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
