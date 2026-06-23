@@ -5,27 +5,38 @@ export default {
     const requestUrl = new URL(request.url);
     const targetUrl = new URL(requestUrl.pathname + requestUrl.search, TOUR_ORIGIN);
 
+    const headers = new Headers();
+    const accept = request.headers.get("accept");
+    const range = request.headers.get("range");
+    const contentType = request.headers.get("content-type");
+
+    if (accept) headers.set("accept", accept);
+    if (range) headers.set("range", range);
+    if (contentType) headers.set("content-type", contentType);
+    headers.set("user-agent", "AccessMapJourneyTourProxy/1.0");
+
     const proxyRequest = new Request(targetUrl, {
       method: request.method,
-      headers: request.headers,
+      headers,
       body: request.method === "GET" || request.method === "HEAD" ? undefined : request.body,
       redirect: "manual"
     });
 
     const upstream = await fetch(proxyRequest);
-    const headers = new Headers(upstream.headers);
+    const responseHeaders = new Headers(upstream.headers);
 
-    headers.delete("content-security-policy");
-    headers.delete("x-frame-options");
-    headers.delete("set-cookie");
+    responseHeaders.delete("content-security-policy");
+    responseHeaders.delete("x-frame-options");
+    responseHeaders.delete("set-cookie");
+    responseHeaders.set("access-control-allow-origin", "*");
 
-    const location = headers.get("location");
+    const location = responseHeaders.get("location");
     if (location && location.startsWith(TOUR_ORIGIN)) {
-      headers.set("location", location.replace(TOUR_ORIGIN, requestUrl.origin));
+      responseHeaders.set("location", location.replace(TOUR_ORIGIN, requestUrl.origin));
     }
 
-    const contentType = headers.get("content-type") || "";
-    if (contentType.includes("text/html")) {
+    const responseType = responseHeaders.get("content-type") || "";
+    if (responseType.includes("text/html")) {
       let html = await upstream.text();
       html = html
         .replaceAll(TOUR_ORIGIN, requestUrl.origin)
@@ -34,14 +45,14 @@ export default {
       return new Response(html, {
         status: upstream.status,
         statusText: upstream.statusText,
-        headers
+        headers: responseHeaders
       });
     }
 
     return new Response(upstream.body, {
       status: upstream.status,
       statusText: upstream.statusText,
-      headers
+      headers: responseHeaders
     });
   }
 };
